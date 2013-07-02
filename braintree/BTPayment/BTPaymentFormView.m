@@ -379,8 +379,8 @@ replacementString:(NSString *)string {
     [scrollView scrollRectToVisible:
      CGRectMake((newCardType.brand == BTCardBrandAMEX ?BT_AMEX_NUMBER_SCROLL_OFFSET : BT_GENERIC_NUMBER_SCROLL_OFFSET), 0, 100, 30)
                            animated:YES];
+    [monthYearTextField becomeFirstResponder];
     [self setSecondaryTextFieldsHidden:NO];
-    [zipTextField becomeFirstResponder];
 }
 
 - (void)changeCardImageForCardNumber:(NSString *)cardNumber isBackImage:(BOOL)isBackImage
