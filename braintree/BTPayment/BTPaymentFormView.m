@@ -64,29 +64,29 @@ static NSInteger thisYear;
         cardImageView = [[UIImageView alloc] initWithImage:[BTPaymentFormView imageWithName:cardImageName]];
         cardImageView.frame = CGRectMake(10, 10, 28, 19);
         [self addSubview:cardImageView];
-
+        
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 5, 258, 30)];
         scrollView.contentSize     = CGSizeMake(500, 30);
         scrollView.scrollEnabled   = NO;
         [self addSubview:scrollView];
-
+        
         cardNumberTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(0, 0, 240, 30) delegate:self];
         cardNumberTextField.placeholder = @"1234  5678  9012  3456";
         [scrollView addSubview:cardNumberTextField];
-
+        
         monthYearTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(110, 5, 60, 30) delegate:self];
         monthYearTextField.placeholder = @"MM/YY";
         [self addSubview:monthYearTextField];
-
+        
         cvvTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(179, 5, 45, 30) delegate:self];
         cvvTextField.placeholder = @"CVV";
         [self addSubview:cvvTextField];
-
+        
         _requestsZip = YES;
         zipTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(230, 5, 60, 30) delegate:self];
         zipTextField.placeholder = @"ZIP";
         [self addSubview:zipTextField];
-
+        
         [self setSecondaryTextFieldsHidden:YES];
     }
     return self;
@@ -96,7 +96,7 @@ static NSInteger thisYear;
 
 - (BOOL)hasValidCardEntry {
     BTPaymentCardType *cardType = [BTPaymentCardUtils cardTypeForNumber:cardNumberTextField.text];
-
+    
     if (cardType &&
         [BTPaymentCardUtils isValidNumber:cardNumberTextField.text] &&
         monthYearTextField.text.length == 5 &&
@@ -107,7 +107,7 @@ static NSInteger thisYear;
             return YES;
         }
     }
-
+    
     return NO;
 }
 
@@ -124,7 +124,7 @@ static NSInteger thisYear;
     if (expirationYear) [cardEntryDictionary setObject:expirationYear forKey:@"expiration_year"];
     if (cvv) [cardEntryDictionary setObject:cvv forKey:@"cvv"];
     if (zipcode) [cardEntryDictionary setObject:zipcode forKey:@"zipcode"];
-
+    
     return cardEntryDictionary;
 }
 
@@ -155,9 +155,9 @@ static NSInteger thisYear;
 // is managed here too.
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range
 replacementString:(NSString *)string {
-
+    
     BOOL performTextViewChange = YES;
-
+    
     if (textField == cardNumberTextField) {
         performTextViewChange = [self cardNumberTextFieldShouldChangeCharactersInRange:range replacementString:string];
     } else if (textField == monthYearTextField) {
@@ -167,11 +167,11 @@ replacementString:(NSString *)string {
     } else if (textField == zipTextField) {
         performTextViewChange = [self zipTextFieldShouldChangeCharactersInRange:range replacementString:string];
     }
-
+    
     if (performTextViewChange) {
         textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
     }
-
+    
     if ([delegate respondsToSelector:@selector(paymentFormView:didModifyCardInformationWithValidity:)]) {
         [delegate paymentFormView:self didModifyCardInformationWithValidity:[self hasValidCardEntry]];
     }
@@ -181,7 +181,7 @@ replacementString:(NSString *)string {
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     BOOL isAmex = [[BTPaymentCardUtils cardTypeForNumber:cardNumberTextField.text] brand] == BTCardBrandAMEX;
-
+    
     if (textField == cardNumberTextField) {
         [self setSecondaryTextFieldsHidden:YES];
         [scrollView scrollRectToVisible:CGRectMake(0, 0, .5, .5) animated:YES];
@@ -200,48 +200,48 @@ replacementString:(NSString *)string {
 
 - (BOOL)cardNumberTextFieldShouldChangeCharactersInRange:(NSRange)range
                                        replacementString:(NSString *)string {
-
+    
     [cardNumberTextField resetTextColor];
-
-
+    
+    
     NSString *oldCardNumberFormatted = cardNumberTextField.text;
     BOOL endsWithSpaceOnDelete = [oldCardNumberFormatted hasSuffix:@"  "] && !string.length;
-
+    
     NSString *newCardNumberFormatted = [oldCardNumberFormatted stringByReplacingCharactersInRange:range withString:string];
     if (endsWithSpaceOnDelete) {
         // Remove last character on delete
         newCardNumberFormatted = [newCardNumberFormatted substringToIndex:newCardNumberFormatted.length-2];
     }
-
+    
     // Remove non-digits
     newCardNumberFormatted = [[newCardNumberFormatted componentsSeparatedByCharactersInSet:
-                            [[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-
+                               [[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
+    
     // Format for pretty viewing
     newCardNumberFormatted = [BTPaymentCardUtils formatNumberForViewing:newCardNumberFormatted];
-
+    
     NSString *newCardNumberRaw = [BTPaymentCardUtils formatNumberForComputing:newCardNumberFormatted];
     BTPaymentCardType *newCardType = [BTPaymentCardUtils cardTypeForNumber:newCardNumberRaw];
-
+    
     // Check for errors in the potential new card number
     if ((!newCardType && newCardNumberRaw.length > 4) ||
         (newCardType && [newCardType.validCardLengths containsObject:[NSNumber numberWithInteger:newCardNumberRaw.length]] &&
          ![BTPaymentCardUtils isValidNumber:newCardNumberRaw] &&
          newCardNumberRaw.length >= [newCardType.maxCardLength integerValue])) {
-        // Card number has no type && greater than 4 digits
-        // OR card number has type and is greater than or equal to expected card length, but is invalid
-
-        cardNumberTextField.textColor = [UIColor redColor];
-        [self shakeView:scrollView completion:nil];
-        return NO;
-    } else if (newCardType && newCardNumberRaw.length > [newCardType.maxCardLength integerValue]) {
-        // Card # is too long
-        return NO;
-    }
-
+            // Card number has no type && greater than 4 digits
+            // OR card number has type and is greater than or equal to expected card length, but is invalid
+            
+            cardNumberTextField.textColor = [UIColor redColor];
+            [self shakeView:scrollView completion:nil];
+            return NO;
+        } else if (newCardType && newCardNumberRaw.length > [newCardType.maxCardLength integerValue]) {
+            // Card # is too long
+            return NO;
+        }
+    
     cardNumberTextField.text = newCardNumberFormatted;
     [self changeCardImageForCardNumber:newCardNumberFormatted
-                         isBackImage:NO animatedFromRight:newCardNumberRaw.length flips:YES];
+                           isBackImage:NO animatedFromRight:newCardNumberRaw.length flips:YES];
     if ([BTPaymentCardUtils isValidNumber:newCardNumberFormatted]) {
         // If card # is valid, give focus to MM/YY text field
         [scrollView scrollRectToVisible:
@@ -297,7 +297,7 @@ replacementString:(NSString *)string {
         }
     } else if (text.length == 4) {
         text = [NSString stringWithFormat:@"%@%@", text, string]; // append to end
-
+        
         // User entered in a full MM/YY combo
         NSInteger enteredMonth = [[text substringToIndex:2] integerValue];
         NSInteger enteredYear  = [[text substringFromIndex:3] integerValue];
@@ -308,7 +308,7 @@ replacementString:(NSString *)string {
             [self shakeView:monthYearTextField completion:nil];
             return NO;
         }
-
+        
         // Valid MM/YY, jump to CVV text field
         monthYearTextField.text = text;
         [cvvTextField becomeFirstResponder];
@@ -349,18 +349,18 @@ replacementString:(NSString *)string {
 - (BOOL)zipTextFieldShouldChangeCharactersInRange:(NSRange)range
                                 replacementString:(NSString *)string {
     NSString *text = zipTextField.text;
-
+    
     if (text.length + string.length > 5 || string.length > 1 || [self stringHasNonDigits:string]) {
         return NO;
     }
-
+    
     return YES;
 }
 
 - (void)setSecondaryTextFieldsHidden:(BOOL)hidden {
     monthYearTextField.hidden =
     cvvTextField.hidden       = hidden;
-
+    
     // Only show the zip text field if it's requested.
     zipTextField.hidden = (_requestsZip ? hidden : YES);
 }
@@ -372,12 +372,23 @@ replacementString:(NSString *)string {
 
 #pragma mark - UI tweaks & animations
 
+- (void)moveFocusAfterCardIO:(NSString *)newCardNumberRaw
+{
+    BTPaymentCardType *newCardType = [BTPaymentCardUtils cardTypeForNumber:newCardNumberRaw];
+    // If card # is valid, give focus to MM/YY text field
+    [scrollView scrollRectToVisible:
+     CGRectMake((newCardType.brand == BTCardBrandAMEX ?BT_AMEX_NUMBER_SCROLL_OFFSET : BT_GENERIC_NUMBER_SCROLL_OFFSET), 0, 100, 30)
+                           animated:YES];
+    [self setSecondaryTextFieldsHidden:NO];
+    [zipTextField becomeFirstResponder];
+}
+
 - (void)changeCardImageForCardNumber:(NSString *)cardNumber isBackImage:(BOOL)isBackImage
                    animatedFromRight:(BOOL)animatedFromRight flips:(BOOL)flips {
     // Get the type of card to display
     BTPaymentCardType *newCardType = [BTPaymentCardUtils cardTypeForNumber:cardNumber];
     NSString *newCardImageName;
-
+    
     if (isBackImage) {
         // If back image wasn't specified on the card, show the default back image
         newCardImageName = (newCardType.backImageName ? newCardType.backImageName : @"BTCVV");
@@ -385,7 +396,7 @@ replacementString:(NSString *)string {
         // If front image wasn't specified on the card, show the default back image
         newCardImageName = (newCardType.frontImageName ? newCardType.frontImageName : @"BTGenericCard");
     }
-
+    
     if (!flips) {
         // Don't flip image if AMEX and changing to/from CVV
         cardImageView.image = [BTPaymentFormView imageWithName:newCardImageName];
@@ -407,9 +418,9 @@ replacementString:(NSString *)string {
     CGFloat t = 3.0;
     CGAffineTransform translateRight  = CGAffineTransformTranslate(CGAffineTransformIdentity, t, 0.0);
     CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -t, 0.0);
-
+    
     viewToShake.transform = translateLeft;
-
+    
     [UIView animateWithDuration:0.07 delay:0.0 options:UIViewAnimationOptionAutoreverse|UIViewAnimationOptionRepeat animations:^{
         [UIView setAnimationRepeatCount:2.0];
         viewToShake.transform = translateRight;
@@ -428,17 +439,17 @@ replacementString:(NSString *)string {
 
 - (void)setRequestsZip:(BOOL)requestsZip {
     _requestsZip = requestsZip;
-
+    
     if (self.zipTextField.isFirstResponder && !requestsZip) {
         [self.zipTextField resignFirstResponder];
     }
-
+    
     // Only show the zip text field now if CVV is showing and developer chose to show it.
     self.zipTextField.hidden = !(!self.cvvTextField.hidden && requestsZip);
-
+    
     // Clear the zip text field if it had any text.
     self.zipTextField.text = @"";
-
+    
     if ([delegate respondsToSelector:@selector(paymentFormView:didModifyCardInformationWithValidity:)]) {
         [delegate paymentFormView:self didModifyCardInformationWithValidity:[self hasValidCardEntry]];
     }
