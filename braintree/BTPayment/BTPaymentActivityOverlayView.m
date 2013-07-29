@@ -39,9 +39,9 @@ static BTPaymentActivityOverlayView *sharedOverlayView = nil;
          UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin);
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5f]; // translucent black
         self.layer.cornerRadius = 10.0f;
-
+        
         CGPoint centerPoint = CGPointMake(86, 86);
-
+        
         UIActivityIndicatorView *activityIndicatorView =
         [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:
          UIActivityIndicatorViewStyleWhiteLarge];
@@ -49,7 +49,7 @@ static BTPaymentActivityOverlayView *sharedOverlayView = nil;
         activityIndicatorView.tag = 1;
         [self addSubview:activityIndicatorView];
         [activityIndicatorView startAnimating];
-
+        
         frame = CGRectMake(0.0f, 128.0f, 172.0f, 20.0f);
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:frame];
         titleLabel.backgroundColor = [UIColor clearColor];
@@ -59,13 +59,8 @@ static BTPaymentActivityOverlayView *sharedOverlayView = nil;
         titleLabel.shadowOffset = CGSizeMake(0, 2);
         titleLabel.font = [UIFont boldSystemFontOfSize:16.0f];
         titleLabel.tag = 2;
-        if (([[[UIDevice currentDevice] systemVersion] compare:@"6" options:NSNumericSearch] != NSOrderedAscending)) {
-            // Is iOS 6 or higher
-            titleLabel.textAlignment = NSTextAlignmentCenter;
-        } else {
-            titleLabel.textAlignment = UITextAlignmentCenter;
-        }
-
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        
         [self addSubview:titleLabel];
     }
     return self;
@@ -75,7 +70,7 @@ static BTPaymentActivityOverlayView *sharedOverlayView = nil;
 
 - (void)show {
     [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
-
+    
     // Add it as a subview to the frontmost window.
     self.hidden = NO;
     UIView *superview = [[[UIApplication sharedApplication] windows] lastObject];
