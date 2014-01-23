@@ -37,7 +37,6 @@
 @property (nonatomic, assign) BOOL hasPaymentMethods;
 
 @property (nonatomic, strong) VTClient *client;
-@property (nonatomic, strong) BTPaymentActivityOverlayView *paymentActivityOverlayView;
 @property (nonatomic, strong) UIButton *submitButton;
 
 @property (nonatomic, strong) UIView *cellBackgroundView; // for iOS 5/6 visuals
@@ -237,11 +236,10 @@
 #pragma mark - BTPaymentViewController public methods
 
 - (void)prepareForDismissal {
-    [self.paymentActivityOverlayView dismissAnimated:YES];
+
 }
 
 - (void)showErrorWithTitle:(NSString *)title message:(NSString *)message {
-    [self.paymentActivityOverlayView dismissAnimated:NO];
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alertView show];
 }
@@ -254,11 +252,6 @@
 
 - (void)submitCardInfo:(UIButton *)button {
     if ([self.delegate respondsToSelector:@selector(paymentViewController:didSubmitCardWithInfo:andCardInfoEncrypted:)]) {
-        if (!self.paymentActivityOverlayView) {
-            self.paymentActivityOverlayView = [BTPaymentActivityOverlayView sharedOverlayView];
-        }
-        [self.paymentActivityOverlayView show];
-
         // Get card info dictionary from the payment form.
         NSDictionary *cardInfo = [self.paymentFormView cardEntry];
         NSDictionary *cardInfoEncrypted;
@@ -383,7 +376,7 @@
                                       reuseIdentifier:currentCellIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
-    
+
     if ([currentCellIdentifier isEqualToString:UseCardCellIdentifier]) {
         [self setUpCardViewForCell:cell];
     } else if ([currentCellIdentifier isEqualToString:PaymentFormViewCellIdentifier]) {
@@ -451,7 +444,7 @@
         if (self.vtCardViewTitleFont)       self.vtCardViewTitleFont       = self.vtCardViewTitleFont;
         if (self.vtCardViewInfoButtonFont)  self.vtCardViewInfoButtonFont  = self.vtCardViewInfoButtonFont;
     }
-    
+
     if (self.cardView && cell && ![cell.contentView viewWithTag:VTCARDVIEW_TAG]) {
         [self.cardView setOrigin:CGPointMake(CELL_SIDE_PADDING, 0)];
         [self.cardView setBackgroundColor:[UIColor clearColor]];
@@ -498,11 +491,6 @@
     // Return it to the delegate
     if ([self.delegate respondsToSelector:
          @selector(paymentViewController:didAuthorizeCardWithPaymentMethodCode:)]) {
-        if (!self.paymentActivityOverlayView) {
-            self.paymentActivityOverlayView = [BTPaymentActivityOverlayView sharedOverlayView];
-            [self.paymentActivityOverlayView show];
-        }
-
         [self.delegate paymentViewController:self didAuthorizeCardWithPaymentMethodCode:paymentMethodCode];
     }
 }
