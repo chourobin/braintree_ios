@@ -1,6 +1,5 @@
 #import "BTPaymentViewController.h"
 #import "BTPaymentFormView.h"
-#import "BTPaymentActivityOverlayView.h"
 #import "BTPaymentSectionHeaderView.h"
 #import "BTDefines.h"
 
@@ -33,7 +32,6 @@
 
 @interface BTPaymentViewController ()
 
-@property (nonatomic, assign) BOOL venmoTouchEnabled;
 @property (nonatomic, assign) BOOL hasPaymentMethods;
 
 @property (nonatomic, strong) VTClient *client;
@@ -43,6 +41,8 @@
 @property (nonatomic, strong) UIView *disabledButtonGradientView;
 @property (nonatomic, strong) UIView *normalButtonGradientView;
 @property (nonatomic, strong) UIView *pressedButtonGradientView;
+@property (nonatomic, strong) UIView *sep1;
+@property (nonatomic, strong) UIView *sep2;
 
 @property (nonatomic, strong) BTPaymentSectionHeaderView *paymentFormHeaderView;
 @property (nonatomic, strong) BTPaymentSectionHeaderView *cardViewHeaderView;
@@ -67,7 +67,7 @@
     }
 
     self.title = @"Payment";
-    self.venmoTouchEnabled = hasVenmoTouchEnabled;
+    self.venmoTouchEnabled = YES;
     self.requestsZipInManualCardEntry = YES;
 
     return self;
@@ -84,6 +84,11 @@
     [super viewDidLoad];
     self.tableView.backgroundView = nil;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+    if (BT_IS_IOS7_OR_GREATER) {
+        self.tableView.separatorInset = UIEdgeInsetsZero;
+    }
+
     if (!self.cornerRadius) self.cornerRadius = BT_DEFAULT_CORNER_RADIUS;
     if (!self.viewBackgroundColor) self.viewBackgroundColor = BT_DEFAULT_BACKGROUND_COLOR;
     [self setViewBackgroundColor:self.viewBackgroundColor]; // Changes the display.
@@ -164,10 +169,10 @@
     self.submitButton.clipsToBounds = YES;
     self.submitButton.layer.cornerRadius = self.cornerRadius;
     self.submitButton.titleLabel.font = [UIFont boldSystemFontOfSize:18];
-    self.submitButton.accessibilityLabel = @"Submit New Card";
+    self.submitButton.accessibilityLabel = NSLocalizedString(@"Submit New Card", nil);
     self.submitButton.backgroundColor = [UIColor whiteColor];
-    [self.submitButton setTitle:@"Submit New Card" forState:UIControlStateNormal];
-    [self.submitButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [self.submitButton setTitle:NSLocalizedString(@"Submit New Card", nil) forState:UIControlStateNormal];
+    [self.submitButton setTitleColor:[UIColor colorWithRed:76.0/255.0 green:160.0/255.0 blue:229.0/255.0 alpha:1.0] forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
     [self.submitButton addTarget:self action:@selector(submitCardInfo:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -235,10 +240,6 @@
 
 #pragma mark - BTPaymentViewController public methods
 
-- (void)prepareForDismissal {
-
-}
-
 - (void)showErrorWithTitle:(NSString *)title message:(NSString *)message {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alertView show];
@@ -305,7 +306,7 @@
         return 74 + 6; //+6 to get nice-sized padding between VTCardView (height of 74) and "Submit New Card" button
     } else if (indexPath.row == 0) {
         // BTPaymentFormView
-        return 40;
+        return 60;
     } else if (indexPath.row == 1) {
         // VTCheckbox (if available) and Submit button
         CGFloat height = ([self showsVTCheckbox] ? self.checkboxView.frame.size.height : SUBMIT_BUTTON_TOP_PADDING)
@@ -317,7 +318,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return (section == 0 ? 40 : 30);
+    return (self.hasPaymentMethods ? 10 : 40);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -348,8 +349,6 @@
         return self.cardViewHeaderView;
     } else {
         // Section that displays the payment form view. Must change the section title accordingly.
-        [self.paymentFormHeaderView setIsTopSectionHeader:!self.hasPaymentMethods];
-        [self.paymentFormHeaderView setTitleText:(self.hasPaymentMethods ? @"Or, Add a New Card" : @"Add a New Card")];
         return self.paymentFormHeaderView;
     }
 }
@@ -404,6 +403,14 @@
             [self adjustCellBackgroundViewShadowWidth];
         } else {
             cell.backgroundColor = [UIColor whiteColor];
+
+            self.sep1 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0.5)];
+            self.sep1.backgroundColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.8 alpha:1];
+            [cell.contentView addSubview:self.sep1];
+
+            self.sep2 = [[UIView alloc] initWithFrame:CGRectMake(0, 59.5f, self.view.frame.size.width, 0.5)];
+            self.sep2.backgroundColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.8 alpha:1];
+            [cell.contentView addSubview:self.sep2];
         }
     }
     else {
@@ -458,6 +465,9 @@
     if (BT_IS_IOS7_OR_GREATER) {
         [self.paymentFormView setOrigin:CGPointMake(0, 1)]; // Shift 1 pixel down to vertically center.
     }
+    CGRect frame = self.paymentFormView.frame;
+    frame.origin.x = 20;
+    self.paymentFormView.frame = frame;
     [cell.contentView addSubview:self.paymentFormView];
 }
 
@@ -565,7 +575,6 @@
     if (!_cardViewHeaderView) {
         _cardViewHeaderView = [[BTPaymentSectionHeaderView alloc] initWithFrame:
                                CGRectMake(0, 0, 320, BT_PAYMENT_SECTION_HEADER_VIEW_HEIGHT)];
-        [_cardViewHeaderView setTitleText:@"Use a Saved Card"];
     }
     return _cardViewHeaderView;
 }

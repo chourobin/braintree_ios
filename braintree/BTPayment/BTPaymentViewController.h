@@ -63,6 +63,7 @@
 @property (nonatomic, strong) VTCardView *cardView;
 @property (nonatomic, strong) VTCheckboxView *checkboxView;
 @property (nonatomic) BOOL UKSupportEnabled;
+@property (nonatomic, assign) BOOL venmoTouchEnabled;
 
 // Reads/Sets the corner radius of the payment form view, submit button, and (optionally) VTCardView.
 @property (nonatomic, assign) CGFloat cornerRadius; //default is 4
@@ -82,8 +83,7 @@
 // presents an error and dismisses the loading indicator
 - (void)showErrorWithTitle:(NSString *)title message:(NSString *)message;
 
-// dismisses the loading indicator
-- (void)prepareForDismissal;
+- (void)submitCardInfo:(UIButton *)button;
 
 @end
 

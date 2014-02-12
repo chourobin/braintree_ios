@@ -57,48 +57,48 @@ static NSInteger thisYear;
 
 // Shorthand initializer.
 + (BTPaymentFormView *)paymentFormView {
-    return [[BTPaymentFormView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];
+    return [[BTPaymentFormView alloc] initWithFrame:CGRectMake(0, 0, 300, 60)];
 }
 
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
         _UKSupportEnabled = NO;
-        
+
         // images are 28 x 19
         cardImageName = @"BTGenericCard";
         cardImageView = [[UIImageView alloc] initWithImage:[BTPaymentFormView imageWithName:cardImageName]];
-        cardImageView.frame = CGRectMake(10, 10, 28, 19);
+        cardImageView.frame = CGRectMake(5, 10 + 10, 28, 19);
         [self addSubview:cardImageView];
-        
-        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 5, 258, 30)];
+
+        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 5, 258, 50)];
         scrollView.contentSize     = CGSizeMake(500, 30);
         scrollView.scrollEnabled   = NO;
         [self addSubview:scrollView];
-        
-        cardNumberTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(5, 0, 240, 30) delegate:self];
+
+        cardNumberTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(5, 5, 240, 40) delegate:self];
         cardNumberTextField.placeholder = @"1234  5678  9012  3456";
         cardNumberTextField.accessibilityLabel = @"Credit Card Number";
         [scrollView addSubview:cardNumberTextField];
-        
-        monthYearTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(105, 5, 60, 30) delegate:self];
+
+        monthYearTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(105, 5, 60, 50) delegate:self];
         monthYearTextField.placeholder = @"MM/YY";
         monthYearTextField.accessibilityLabel = @"Credit Card Expiration Date";
         [self addSubview:monthYearTextField];
-        
-        cvvTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(169, 5, 45, 30) delegate:self];
+
+        cvvTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(169, 5, 45, 50) delegate:self];
         cvvTextField.placeholder = @"CVV";
         cvvTextField.accessibilityLabel = @"Credit Card CVV";
         [self addSubview:cvvTextField];
-        
+
         _requestsZip = YES;
-        zipTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(215, 5, 80, 30) delegate:self];
-        
+        zipTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(215, 5, 80, 50) delegate:self];
+
         [self setupZipKeyboard];
-        
+
         zipTextField.autocapitalizationType = UITextAutocapitalizationTypeAllCharacters;
         zipTextField.minimumFontSize = 10;
         zipTextField.adjustsFontSizeToFitWidth = YES;
-        
+
         zipTextField.placeholder = @"ZIP";
         zipTextField.accessibilityLabel = @"Credit Card Zip";
         [self addSubview:zipTextField];
@@ -147,20 +147,20 @@ static NSInteger thisYear;
     [NSRegularExpression regularExpressionWithPattern:BT_REGEX_ZIP_USA
                                               options:NSRegularExpressionCaseInsensitive
                                                 error:nil];
-    
+
     NSRegularExpression *postCodeRegex =
     [NSRegularExpression regularExpressionWithPattern:BT_REGEX_POSTCODE_UK
                                               options:NSRegularExpressionCaseInsensitive
                                                 error:nil];
-    
+
     if ([zipRegex numberOfMatchesInString:zip options:0 range:NSMakeRange(0, [zip length])] == 1) {
         return YES;
     }
-    
+
     if (self.UKSupportEnabled && [postCodeRegex numberOfMatchesInString:zip options:0 range:NSMakeRange(0, [zip length])] == 1) {
         return YES;
     }
-    
+
     return NO;
 }
 
@@ -171,7 +171,7 @@ static NSInteger thisYear;
     NSString *expirationYear  = [self yearExpirationEntry];
     NSString *cvv             = [self cvvEntry];
     NSString *zipcode         = [self zipEntry];
-    
+
     if (cardNumber) [cardEntryDictionary setObject:cardNumber forKey:@"card_number"];
     if (expirationMonth) [cardEntryDictionary setObject:expirationMonth forKey:@"expiration_month"];
     if (expirationYear) [cardEntryDictionary setObject:expirationYear forKey:@"expiration_year"];
@@ -229,7 +229,7 @@ replacementString:(NSString *)string {
     if ([delegate respondsToSelector:@selector(paymentFormView:didModifyCardInformationWithValidity:)]) {
         [delegate paymentFormView:self didModifyCardInformationWithValidity:[self hasValidCardEntry]];
     }
-    
+
     return NO;
 }
 
@@ -299,7 +299,7 @@ replacementString:(NSString *)string {
     if ([BTPaymentCardUtils isValidNumber:newCardNumberFormatted]) {
         // If card # is valid, give focus to MM/YY text field
         [scrollView scrollRectToVisible:
-         CGRectMake((newCardType.brand == BTCardBrandAMEX ?BT_AMEX_NUMBER_SCROLL_OFFSET : BT_GENERIC_NUMBER_SCROLL_OFFSET), 0, 100, 30)
+         CGRectMake((newCardType.brand == BTCardBrandAMEX ? BT_AMEX_NUMBER_SCROLL_OFFSET : BT_GENERIC_NUMBER_SCROLL_OFFSET), 0, 100, 30)
                                animated:YES];
         [monthYearTextField becomeFirstResponder];
         [self setSecondaryTextFieldsHidden:NO];
@@ -370,7 +370,7 @@ replacementString:(NSString *)string {
     } else if (text.length >= 5) {
         return NO;
     }
-    
+
     return YES;
 }
 
@@ -378,7 +378,7 @@ replacementString:(NSString *)string {
                                 replacementString:(NSString *)string {
     BTPaymentCardType *cardType = [BTPaymentCardUtils cardTypeForNumber:cardNumberTextField.text];
     NSString *text = cvvTextField.text;
-    
+
     if (!string.length) {
         // backspace
         return YES;
@@ -396,39 +396,39 @@ replacementString:(NSString *)string {
         }
         return NO;
     }
-    
+
     return YES;
 }
 
 - (BOOL)zipTextFieldShouldChangeCharactersInRange:(NSRange)range
                                 replacementString:(NSString *)string {
     NSString *text = zipTextField.text;
-    
+
     BOOL hasNonDigits = [self stringHasNonDigits:text];
     NSInteger newTotalLength = text.length + string.length;
-    
+
     if (string.length > 1)
         return NO;
-    
-    
+
+
     if (self.UKSupportEnabled && (hasNonDigits || text.length == 0)) {
         if (newTotalLength > 8)
             return NO;
-        
+
         NSCharacterSet *invalidCharSet = [[NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 "] invertedSet];
         NSString *filtered = [[string componentsSeparatedByCharactersInSet:invalidCharSet] componentsJoinedByString:@""];
         return [string isEqualToString:filtered];
-        
+
     } else {
         if (newTotalLength > 5)
             return NO;
-        
+
         NSCharacterSet *invalidCharSet = [[NSCharacterSet characterSetWithCharactersInString:@"1234567890 "] invertedSet];
         NSString *filtered = [[string componentsSeparatedByCharactersInSet:invalidCharSet] componentsJoinedByString:@""];
         return [string isEqualToString:filtered];
-        
+
     }
-    
+
     return YES;
 }
 
