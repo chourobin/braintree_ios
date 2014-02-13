@@ -57,7 +57,7 @@ static NSInteger thisYear;
 
 // Shorthand initializer.
 + (BTPaymentFormView *)paymentFormView {
-    return [[BTPaymentFormView alloc] initWithFrame:CGRectMake(0, 0, 300, 60)];
+    return [[BTPaymentFormView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -67,31 +67,31 @@ static NSInteger thisYear;
         // images are 28 x 19
         cardImageName = @"BTGenericCard";
         cardImageView = [[UIImageView alloc] initWithImage:[BTPaymentFormView imageWithName:cardImageName]];
-        cardImageView.frame = CGRectMake(5, 10 + 10, 28, 19);
+        cardImageView.frame = CGRectMake(5, 10, 28, 19);
         [self addSubview:cardImageView];
 
-        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 5, 258, 50)];
+        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 0, 258, 40)];
         scrollView.contentSize     = CGSizeMake(500, 30);
         scrollView.scrollEnabled   = NO;
         [self addSubview:scrollView];
 
-        cardNumberTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(5, 5, 240, 40) delegate:self];
+        cardNumberTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(5, 5, 240, 30) delegate:self];
         cardNumberTextField.placeholder = @"1234  5678  9012  3456";
         cardNumberTextField.accessibilityLabel = @"Credit Card Number";
         [scrollView addSubview:cardNumberTextField];
 
-        monthYearTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(105, 5, 60, 50) delegate:self];
+        monthYearTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(105, 0, 60, 40) delegate:self];
         monthYearTextField.placeholder = @"MM/YY";
         monthYearTextField.accessibilityLabel = @"Credit Card Expiration Date";
         [self addSubview:monthYearTextField];
 
-        cvvTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(169, 5, 45, 50) delegate:self];
+        cvvTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(169, 0, 45, 40) delegate:self];
         cvvTextField.placeholder = @"CVV";
         cvvTextField.accessibilityLabel = @"Credit Card CVV";
         [self addSubview:cvvTextField];
 
         _requestsZip = YES;
-        zipTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(215, 5, 80, 50) delegate:self];
+        zipTextField = [[BTPaymentFormTextField alloc] initWithFrame:CGRectMake(215, 0, 80, 40) delegate:self];
 
         [self setupZipKeyboard];
 

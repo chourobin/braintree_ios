@@ -306,7 +306,7 @@
         return 74 + 6; //+6 to get nice-sized padding between VTCardView (height of 74) and "Submit New Card" button
     } else if (indexPath.row == 0) {
         // BTPaymentFormView
-        return 60;
+        return 40;
     } else if (indexPath.row == 1) {
         // VTCheckbox (if available) and Submit button
         CGFloat height = ([self showsVTCheckbox] ? self.checkboxView.frame.size.height : SUBMIT_BUTTON_TOP_PADDING)
@@ -318,7 +318,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return (self.hasPaymentMethods ? 10 : 40);
+    return (self.hasPaymentMethods ? (section == 0 ? 20 : 10) : 30);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -408,7 +408,7 @@
             self.sep1.backgroundColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.8 alpha:1];
             [cell.contentView addSubview:self.sep1];
 
-            self.sep2 = [[UIView alloc] initWithFrame:CGRectMake(0, 59.5f, self.view.frame.size.width, 0.5)];
+            self.sep2 = [[UIView alloc] initWithFrame:CGRectMake(0, 39.5f, self.view.frame.size.width, 0.5)];
             self.sep2.backgroundColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.8 alpha:1];
             [cell.contentView addSubview:self.sep2];
         }
