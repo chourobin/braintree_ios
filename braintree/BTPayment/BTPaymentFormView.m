@@ -67,7 +67,7 @@ static NSInteger thisYear;
         // images are 28 x 19
         cardImageName = @"BTGenericCard";
         cardImageView = [[UIImageView alloc] initWithImage:[BTPaymentFormView imageWithName:cardImageName]];
-        cardImageView.frame = CGRectMake(5, 10, 28, 19);
+        cardImageView.frame = CGRectMake(5, 9.5, 28, 19);
         [self addSubview:cardImageView];
 
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(48, 0, 258, 40)];

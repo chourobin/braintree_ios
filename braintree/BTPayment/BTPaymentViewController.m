@@ -318,7 +318,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return (self.hasPaymentMethods ? (section == 0 ? 20 : 10) : 30);
+    return (self.hasPaymentMethods ? (section == 0 ? 20 : 10) : 40);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
