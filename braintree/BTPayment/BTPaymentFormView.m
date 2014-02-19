@@ -447,6 +447,17 @@ replacementString:(NSString *)string {
 
 #pragma mark - UI tweaks & animations
 
+- (void)moveFocusAfterCardIO:(NSString *)newCardNumberRaw
+{
+    BTPaymentCardType *newCardType = [BTPaymentCardUtils cardTypeForNumber:newCardNumberRaw];
+    // If card # is valid, give focus to MM/YY text field
+    [scrollView scrollRectToVisible:
+     CGRectMake((newCardType.brand == BTCardBrandAMEX ? BT_AMEX_NUMBER_SCROLL_OFFSET : BT_GENERIC_NUMBER_SCROLL_OFFSET), 0, 100, 30)
+                           animated:YES];
+    [monthYearTextField becomeFirstResponder];
+    [self setSecondaryTextFieldsHidden:NO];
+}
+
 - (void)changeCardImageForCardNumber:(NSString *)cardNumber isBackImage:(BOOL)isBackImage
                    animatedFromRight:(BOOL)animatedFromRight flips:(BOOL)flips {
     // Get the type of card to display

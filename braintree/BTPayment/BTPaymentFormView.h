@@ -74,7 +74,7 @@
 - (NSString *)yearExpirationEntry;
 - (NSString *)cvvEntry;
 - (NSString *)zipEntry;
-
+- (void)moveFocusAfterCardIO:(NSString *)newCardNumberRaw; // Custom Method to Move Focus after CardIO is entered
 - (void)setOrigin:(CGPoint)origin; // Convenience UI method
 
 @end
